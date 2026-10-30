@@ -74,12 +74,15 @@ configure_ssh_keys() (
 
     while true; do
         if [[ "$first_key" == true ]]; then
-            if ! IFS= read -r -p 'Публичный SSH-ключ (Enter — ключ по умолчанию): ' key_line </dev/tty; then
+            if [[ ${auto_mode:-false} == true ]]; then
+                key_line=$default_key
+            elif ! IFS= read -r -p 'Публичный SSH-ключ (Enter — ключ по умолчанию): ' key_line </dev/tty; then
                 printf 'Ошибка: не удалось прочитать SSH-ключ из терминала.\n' >&2
                 return 1
             fi
             key_line=${key_line:-$default_key}
         else
+            [[ ${auto_mode:-false} != true ]] || break
             if ! IFS= read -r -p 'Дополнительный публичный SSH-ключ (Enter — завершить): ' key_line </dev/tty; then
                 printf 'Ошибка: не удалось прочитать SSH-ключ из терминала.\n' >&2
                 return 1

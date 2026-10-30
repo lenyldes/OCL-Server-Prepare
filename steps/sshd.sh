@@ -22,7 +22,9 @@ configure_sshd() (
     fi
 
     while true; do
-        if ! IFS= read -r -p 'Порт SSH (Enter — 18233): ' ssh_port </dev/tty; then
+        if [[ ${auto_mode:-false} == true ]]; then
+            ssh_port=18233
+        elif ! IFS= read -r -p 'Порт SSH (Enter — 18233): ' ssh_port </dev/tty; then
             printf 'Ошибка: не удалось прочитать порт SSH из терминала.\n' >&2
             return 1
         fi

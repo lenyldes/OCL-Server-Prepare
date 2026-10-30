@@ -15,7 +15,9 @@ configure_hostname() (
     printf 'Текущее имя сервера: %s\n' "$current_hostname"
 
     while true; do
-        if ! read -r -p 'Новое имя сервера (Enter — оставить текущее): ' new_hostname </dev/tty; then
+        if [[ ${auto_mode:-false} == true ]]; then
+            new_hostname=''
+        elif ! read -r -p 'Новое имя сервера (Enter — оставить текущее): ' new_hostname </dev/tty; then
             printf 'Ошибка: не удалось прочитать имя сервера из терминала.\n' >&2
             return 1
         fi

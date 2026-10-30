@@ -3,7 +3,7 @@
 change_root_password() {
     local answer required_command root_password
 
-    while true; do
+    while [[ ${auto_mode:-false} != true ]]; do
         if ! read -r -p 'Сменить пароль root? [y/N] ' answer </dev/tty; then
             printf 'Ошибка: не удалось прочитать ответ из терминала.\n' >&2
             return 1
@@ -38,7 +38,7 @@ change_root_password() {
         return 1
     fi
 
+    ocl_saved_root_password=$root_password
     printf 'Пароль root успешно изменён.\n'
-    printf 'Новый пароль root: %s\n' "$root_password"
     unset root_password
 }
