@@ -1,0 +1,23 @@
+export ZSH="$HOME/.oh-my-zsh"
+
+ZSH_THEME="lenyldes"
+
+plugins=(
+  colored-man-pages
+  docker
+  docker-compose
+  kubectl
+  helm
+  terraform
+  fzf
+  zsh-completions
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+# Дополнения должны быть доступны до compinit внутри Oh My Zsh.
+# Плагин добавляет этот же путь повторно; уникальный fpath исключает дубликат.
+typeset -U fpath
+fpath+=("$ZSH/custom/plugins/zsh-completions/src")
+
+source "$ZSH/oh-my-zsh.sh"

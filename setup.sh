@@ -32,6 +32,7 @@ setup_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 . "$setup_dir/steps/ssh-keys.sh"
 . "$setup_dir/steps/sshd.sh"
 . "$setup_dir/steps/ufw.sh"
+. "$setup_dir/steps/zsh.sh"
 
 change_root_password
 create_user
@@ -41,3 +42,4 @@ configure_hostname
 configure_ssh_keys "$setup_dir/keys/default.pub"
 configure_sshd "$setup_dir/templates/sshd_config"
 configure_ufw
+configure_zsh "$setup_dir/templates"
