@@ -26,6 +26,8 @@ printf 'Предварительная проверка пройдена: зап
 setup_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 . "$setup_dir/steps/root-password.sh"
 . "$setup_dir/steps/user.sh"
+. "$setup_dir/steps/sudo.sh"
 
 change_root_password
 create_user
+grant_sudo_access
