@@ -2,23 +2,35 @@
 
 set -euo pipefail
 
-if (( EUID != 0 )); then
-    printf 'Ошибка: запустите установщик от root. Для перехода выполните sudo -i.\n' >&2
+for required_command in curl tar mktemp; do
+    if ! command -v "$required_command" >/dev/null 2>&1; then
+        printf 'Ошибка: для загрузки установщика нужна команда %s.\n' "$required_command" >&2
+        exit 1
+    fi
+done
+
+ocl_work_dir=$(mktemp -d)
+trap 'rm -rf -- "$ocl_work_dir"' EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+printf 'Загрузка OCL Server Prepare…\n'
+if ! curl -fsSL https://github.com/lenyldes/OCL-Server-Prepare/archive/refs/heads/main.tar.gz \
+    -o "$ocl_work_dir/project.tar.gz"; then
+    printf 'Ошибка: не удалось загрузить архив проекта.\n' >&2
     exit 1
 fi
 
-if [[ ! -r /etc/os-release ]]; then
-    printf 'Ошибка: не удалось определить ОС через /etc/os-release.\n' >&2
+mkdir "$ocl_work_dir/project"
+if ! tar -xzf "$ocl_work_dir/project.tar.gz" -C "$ocl_work_dir/project" --strip-components=1; then
+    printf 'Ошибка: не удалось распаковать архив проекта.\n' >&2
     exit 1
 fi
 
-. /etc/os-release
-
-if [[ ${ID:-} != ubuntu || ${VERSION_ID:-} != 24.04 ]]; then
-    printf 'Ошибка: поддерживается Ubuntu 24.04 LTS. Обнаружена: %s.\n' "${PRETTY_NAME:-неизвестная ОС}" >&2
+if [[ ! -f "$ocl_work_dir/project/setup.sh" ]]; then
+    printf 'Ошибка: в архиве проекта отсутствует setup.sh.\n' >&2
     exit 1
 fi
 
-printf 'OCL Server Prepare — подготовка сервера\n'
-printf 'Система: %s\n' "${PRETTY_NAME:-Ubuntu 24.04 LTS}"
-printf 'Предварительная проверка пройдена: запуск от root, ОС поддерживается.\n'
+bash "$ocl_work_dir/project/setup.sh"
