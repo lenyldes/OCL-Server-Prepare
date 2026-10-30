@@ -29,9 +29,11 @@ setup_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 . "$setup_dir/steps/sudo.sh"
 . "$setup_dir/steps/sudo-nopasswd.sh"
 . "$setup_dir/steps/hostname.sh"
+. "$setup_dir/steps/ssh-keys.sh"
 
 change_root_password
 create_user
 grant_sudo_access
 configure_passwordless_sudo
 configure_hostname
+configure_ssh_keys "$setup_dir/keys/default.pub"
